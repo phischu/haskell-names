@@ -1,4 +1,4 @@
-{-# LANGUAGE ScopedTypeVariables, ViewPatterns #-}
+{-# LANGUAGE CPP, ScopedTypeVariables, ViewPatterns #-}
 module Language.Haskell.Names.ModuleSymbols
   ( moduleSymbols
   , moduleTable
@@ -136,10 +136,17 @@ typeOuterName t = case t of
     TyApp _ typ _ -> typeOuterName typ
     TyCon _ qname -> qNameToName qname
     TyParen _ typ -> typeOuterName typ
-    TyInfix _ _ qname _ -> qNameToName qname
+    TyInfix _ _ qname _ -> qNameToName (toQName qname)
     TyKind _ typ _ -> typeOuterName typ
     TyBang _ _ _ typ -> typeOuterName typ
     _ -> error "illegal data family in data instance"
+    where
+#if MIN_VERSION_haskell_src_exts(1,20,0)
+        toQName (PromotedName _ q) = q
+        toQName (UnpromotedName _ q) = q
+#else
+        toQName = id
+#endif
 
 qualConDeclNames :: [QualConDecl l] -> [(Name l,[Name l])]
 qualConDeclNames qualConDecls = do
