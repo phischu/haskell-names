@@ -1,5 +1,5 @@
 {-# OPTIONS_GHC -fno-warn-orphans -fno-warn-unused-matches #-}
-{-# LANGUAGE TemplateHaskell, MultiParamTypeClasses, FlexibleInstances, ConstraintKinds, UndecidableInstances #-}
+{-# LANGUAGE CPP, TemplateHaskell, MultiParamTypeClasses, FlexibleInstances, ConstraintKinds, UndecidableInstances #-}
 module Language.Haskell.Names.Open.Derived where
 
 import Language.Haskell.Exts
@@ -70,6 +70,12 @@ deriveGTraversable ''GadtDecl
 deriveGTraversable ''ClassDecl
 
 deriveGTraversable ''InstDecl
+
+#if MIN_VERSION_haskell_src_exts(1,20,0)
+deriveGTraversable ''DerivStrategy
+
+deriveGTraversable ''MaybePromotedName
+#endif
 
 deriveGTraversable ''BangType
 
